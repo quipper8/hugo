@@ -127,6 +127,7 @@ func (ns *Namespace) GetJSON(urlParts ...string) (v interface{}, err error) {
 
 // GetXML expects one or n-parts of a URL to a resource which can either be a local or a remote one.
 // If you provide multiple parts they will be joined together to the final URL.
+// Note that Go xml parsing is not super
 // GetXML returns nil or parsed xmls to use in a short code.
 func (ns *Namespace) GetXML(urlParts ...string) (v interface{}, err error) {
 	url := strings.Join(urlParts, "")
