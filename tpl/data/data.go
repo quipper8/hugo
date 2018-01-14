@@ -17,6 +17,7 @@ import (
 	"bytes"
 	"encoding/csv"
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"net/http"
 	"strings"
@@ -114,6 +115,44 @@ func (ns *Namespace) GetJSON(urlParts ...string) (v interface{}, err error) {
 		err = json.Unmarshal(c, &v)
 		if err != nil {
 			jww.ERROR.Printf("Cannot read json from resource %s with error message %s", url, err)
+			jww.ERROR.Printf("Retry #%d for %s and sleeping for %s", i, url, resSleep)
+			time.Sleep(resSleep)
+			deleteCache(url, ns.deps.Fs.Source, ns.deps.Cfg)
+			continue
+		}
+		break
+	}
+	return
+}
+
+// GetXML expects one or n-parts of a URL to a resource which can either be a local or a remote one.
+// If you provide multiple parts they will be joined together to the final URL.
+// GetXML returns nil or parsed xmls to use in a short code.
+func (ns *Namespace) GetXML(urlParts ...string) (v interface{}, err error) {
+	url := strings.Join(urlParts, "")
+
+	for i := 0; i <= resRetries; i++ {
+		var req *http.Request
+		req, err = http.NewRequest("GET", url, nil)
+		if err != nil {
+			jww.ERROR.Printf("Failed to create request for getXML: %s", err)
+			return nil, err
+		}
+
+		req.Header.Add("Accept", "application/xml")
+		req.Header.Add("Accept", "application/rss+xml")
+		req.Header.Add("Accept", "txt/xml")
+
+		var c []byte
+		c, err = ns.getResource(req)
+		if err != nil {
+			jww.ERROR.Printf("Failed to get xml resource %s with error message %s", url, err)
+			return nil, err
+		}
+
+		err = xml.Unmarshal(c, &v)
+		if err != nil {
+			jww.ERROR.Printf("Cannot read xml from resource %s with error message %s", url, err)
 			jww.ERROR.Printf("Retry #%d for %s and sleeping for %s", i, url, resSleep)
 			time.Sleep(resSleep)
 			deleteCache(url, ns.deps.Fs.Source, ns.deps.Cfg)
