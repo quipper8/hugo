@@ -6,7 +6,7 @@ date: 2017-02-01
 publishdate: 2017-02-01
 lastmod: 2017-03-12
 categories: [templates]
-keywords: [data,dynamic,csv,json,toml,yaml]
+keywords: [data,dynamic,csv,json,toml,xml,yaml]
 menu:
   docs:
     parent: "templates"
@@ -118,9 +118,9 @@ Note the use of the [`markdownify` template function][markdownify]. This will se
 
 ## Data-Driven Content
 
-In addition to the [data files](/extras/datafiles/) feature, Hugo also a "data-driven content" feature, which lets you load any [JSON](http://www.json.org/) or [CSV](http://en.wikipedia.org/wiki/Comma-separated_values) file from nearly any resource.
+In addition to the [data files](/extras/datafiles/) feature, Hugo also a "data-driven content" feature, which lets you load any [JSON](http://www.json.org/) or [CSV](http://en.wikipedia.org/wiki/Comma-separated_values) file or [XML](https://www.w3.org/TR/REC-xml/) file from nearly any resource.
 
-Data-driven content currently consists of two functions, `getJSON` and `getCSV`, which are available in all template files.
+Data-driven content currently consists of three functions, `getJSON` , `getCSV`, and `getXML` which are available in all template files.
 
 ## Implementation details
 
@@ -130,6 +130,7 @@ In your template, call the functions like this:
 
 ```
 {{ $dataJ := getJSON "url" }}
+{{ $dataX := getXML "url" }}
 {{ $dataC := getCSV "separator" "url" }}
 ```
 
@@ -137,6 +138,7 @@ If you use a prefix or postfix for the URL, the functions accept [variadic argum
 
 ```
 {{ $dataJ := getJSON "url prefix" "arg1" "arg2" "arg n" }}
+{{ $dataX := getXML "url prefix" "arg1" "arg2" "arg n" }}
 {{ $dataC := getCSV  "separator" "url prefix" "arg1" "arg2" "arg n" }}
 ```
 
@@ -238,9 +240,11 @@ If you change any local file and the LiveReload is triggered, Hugo will read the
 * [YAML Spec][yaml]
 * [JSON Spec][json]
 * [CSV Spec][csv]
+* [XML Spec][xml]
 
 [config]: /getting-started/configuration/
 [csv]: https://tools.ietf.org/html/rfc4180
+[xml]: http://www.w3.org/TR/REC-xml
 [customize]: /themes/customizing/
 [json]: https://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf "Specification for JSON, JavaScript Object Notation"
 [LiveReload]: /getting-started/usage/#livereload
